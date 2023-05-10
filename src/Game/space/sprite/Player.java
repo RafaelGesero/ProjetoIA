@@ -17,7 +17,7 @@ public class Player extends Sprite {
 
 	private void initPlayer() {
 
-		String playerImg = "src/images/player.png";
+		String playerImg = "src/Game/images/player.png";
 		ImageIcon ii = new ImageIcon(playerImg);
 
 		width = ii.getImage().getWidth(null);

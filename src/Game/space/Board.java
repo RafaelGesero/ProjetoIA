@@ -64,7 +64,7 @@ public class Board extends JPanel {
 
 	private void initBoard() {
 
-//		addKeyListener(new TAdapter());
+		//addKeyListener(new TAdapter());
 		setFocusable(true);
 		d = new Dimension(Commons.BOARD_WIDTH, Commons.BOARD_HEIGHT);
 		setBackground(Color.black);
@@ -72,7 +72,7 @@ public class Board extends JPanel {
 		timer = new Timer(Commons.DELAY, new GameCycle());
 		timer.start();
 
-		gameInit();
+		//gameInit();
 	}
 
 	private void gameInit() {
@@ -108,14 +108,11 @@ public class Board extends JPanel {
 	}
 
 	private void drawPlayer(Graphics g) {
-
-		if (player.isVisible()) {
-
+		if (player.isVisible())
 			g.drawImage(player.getImage(), player.getX(), player.getY(), this);
-		}
+
 
 		if (player.isDying()) {
-
 			player.die();
 			inGame = false;
 		}
@@ -433,4 +430,9 @@ public class Board extends JPanel {
 	public void setController(GameController controller) {
 		this.controller = controller;
 	}
+
+	public JPanel getPanel(){
+		return this;
+	}
 }
+
