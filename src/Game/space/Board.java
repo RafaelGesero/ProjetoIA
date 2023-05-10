@@ -20,6 +20,7 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 
 import Game.controllers.GameController;
+import Game.nn.FeedForwardNN;
 import Game.space.sprite.Alien;
 import Game.space.sprite.Player;
 import Game.space.sprite.Shot;
@@ -60,6 +61,7 @@ public class Board extends JPanel {
 		this.headLess = true;
 		this.controller = controller;
 		gameInit();
+
 	}
 
 	private void initBoard() {
@@ -422,7 +424,6 @@ public class Board extends JPanel {
 
 	public Double getFitness() {
 		double fitness = (double) (getDeaths() * 10000 + getTime());
-		// System.out.println(fitness);
 		return fitness;
 	}
 

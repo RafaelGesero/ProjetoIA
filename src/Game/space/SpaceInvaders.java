@@ -5,6 +5,7 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 
 import Game.controllers.GameController;
+import Game.nn.FeedForwardNN;
 
 public class SpaceInvaders extends JFrame {
 
@@ -38,7 +39,6 @@ public class SpaceInvaders extends JFrame {
 
 		});
 	}
-	
 	public void setController(GameController controller) {
 		board.setController(controller);
 	}
