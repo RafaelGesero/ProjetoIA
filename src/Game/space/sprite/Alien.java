@@ -50,7 +50,7 @@ public class Alien extends Sprite {
             this.x = x;
             this.y = y;
 
-            String bombImg = "src/images/bomb.png";
+            String bombImg = "src/Game/images/bomb.png";
             ImageIcon ii = new ImageIcon(bombImg);
             setImage(ii.getImage());
         }
