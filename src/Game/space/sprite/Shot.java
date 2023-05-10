@@ -14,7 +14,7 @@ public class Shot extends Sprite {
 
     private void initShot(int x, int y) {
 
-        String shotImg = "src/images/shot.png";
+        String shotImg = "src/Game/images/shot.png";
         ImageIcon ii = new ImageIcon(shotImg);
         setImage(ii.getImage());
 

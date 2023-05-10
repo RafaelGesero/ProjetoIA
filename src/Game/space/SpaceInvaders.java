@@ -35,6 +35,7 @@ public class SpaceInvaders extends JFrame {
 			ex.setController(controller);
 			ex.setSeed(seed);
 			ex.setVisible(true);
+
 		});
 	}
 	
