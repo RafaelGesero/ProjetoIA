@@ -224,7 +224,6 @@ public class Board extends JPanel {
 			state[index++] = (shot.getY() * 1.0) / Commons.BOARD_HEIGHT;
 			//state[index++] = shot.isDying() ? -1 : 1;
 		}
-		
 		return state;
 	}
 
@@ -431,8 +430,5 @@ public class Board extends JPanel {
 		this.controller = controller;
 	}
 
-	public JPanel getPanel(){
-		return this;
-	}
 }
 
