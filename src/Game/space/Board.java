@@ -10,10 +10,7 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
@@ -245,6 +242,10 @@ public class Board extends JPanel {
 		double[] output = controller.nextMove(d);
 
 		player.act(output);
+
+		System.out.println("Retorno do act output " + Arrays.toString(output));
+
+
 		if (output[3] > 0.5) {
 			if (inGame) {
 				if (!shot.isVisible()) {

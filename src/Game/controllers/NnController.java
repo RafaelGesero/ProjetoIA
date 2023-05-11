@@ -2,24 +2,29 @@ package Game.controllers;
 
 import Game.nn.FeedForwardNN;
 
+import java.util.Arrays;
+
+
 public class NnController implements GameController {
 
+    private int test =0;
     private  FeedForwardNN nn;
 
     public NnController(FeedForwardNN nn){
         this.nn = nn;
         nn.initializeWeights();
     }
-
     @Override
     public double[] nextMove(double[] currentState) {
-        double[] mov = new double[currentState.length];
-        for(int i= 0; i < currentState.length; i++){
-           if(currentState[i] > 0.5)
-               mov[i] = 1.0;
-           else
-               mov[i] = 0.0;
-        }
-        return mov;
+        double[] forward = nn.forward(currentState);
+       double[] mov = new double[forward.length];
+
+       System.out.println(Arrays.toString(forward));
+
+        return forward;
     }
+
+
+
+
 }
