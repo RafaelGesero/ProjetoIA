@@ -11,6 +11,6 @@ public class PlayRandomController {
 		FeedForwardNN nn = new FeedForwardNN(Commons.STATE_SIZE, (Commons.STATE_SIZE + Commons.NUM_ACTIONS)/2, Commons.NUM_ACTIONS);
 		GameController c = new NnController(nn);
 		//GameController c = new RandomController(new Random());
- 		SpaceInvaders.showControllerPlaying(c,20);
+ 		SpaceInvaders.showControllerPlaying(c,5);
 	}
 }

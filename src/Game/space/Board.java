@@ -1,5 +1,10 @@
 package Game.space;
 
+import Game.controllers.GameController;
+import Game.space.sprite.Alien;
+import Game.space.sprite.Player;
+import Game.space.sprite.Shot;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -10,17 +15,15 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Random;
 
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
-import Game.controllers.GameController;
-import Game.nn.FeedForwardNN;
-import Game.space.sprite.Alien;
-import Game.space.sprite.Player;
-import Game.space.sprite.Shot;
 
 public class Board extends JPanel {
 
@@ -58,12 +61,11 @@ public class Board extends JPanel {
 		this.headLess = true;
 		this.controller = controller;
 		gameInit();
-
 	}
 
 	private void initBoard() {
 
-		//addKeyListener(new TAdapter());
+//		addKeyListener(new TAdapter());
 		setFocusable(true);
 		d = new Dimension(Commons.BOARD_WIDTH, Commons.BOARD_HEIGHT);
 		setBackground(Color.black);
@@ -71,7 +73,7 @@ public class Board extends JPanel {
 		timer = new Timer(Commons.DELAY, new GameCycle());
 		timer.start();
 
-		//gameInit();
+		gameInit();
 	}
 
 	private void gameInit() {
@@ -107,11 +109,14 @@ public class Board extends JPanel {
 	}
 
 	private void drawPlayer(Graphics g) {
-		if (player.isVisible())
-			g.drawImage(player.getImage(), player.getX(), player.getY(), this);
 
+		if (player.isVisible()) {
+
+			g.drawImage(player.getImage(), player.getX(), player.getY(), this);
+		}
 
 		if (player.isDying()) {
+
 			player.die();
 			inGame = false;
 		}
@@ -203,7 +208,7 @@ public class Board extends JPanel {
 	}
 
 	private double[] createState() {
-		double[] state = new double[aliens.size() * 3 * 2 + 1 + 3];
+		double[] state = new double[Commons.STATE_SIZE];
 		int index = 0;
 		for (Alien a : aliens) {
 			state[index++] = (a.getX() * 1.0) / Commons.BOARD_WIDTH;
@@ -215,6 +220,10 @@ public class Board extends JPanel {
 			if (!a.getBomb().isDestroyed()) {
 				state[index++] = (a.getBomb().getX() * 1.0) / Commons.BOARD_WIDTH;
 				state[index++] = (a.getBomb().getY() * 1.0) / Commons.BOARD_HEIGHT;
+			} else {
+				state[index++] = 0;
+				state[index++] = 0;
+
 			}
 		}
 		state[index++] = (player.getX() * 1.0) / Commons.BOARD_WIDTH;
@@ -223,10 +232,12 @@ public class Board extends JPanel {
 			state[index++] = (shot.getY() * 1.0) / Commons.BOARD_HEIGHT;
 			//state[index++] = shot.isDying() ? -1 : 1;
 		}
+
 		return state;
 	}
 
 	private void update() {
+
 		time++;
 		if (deaths == Commons.NUMBER_OF_ALIENS_TO_DESTROY) {
 
@@ -242,10 +253,6 @@ public class Board extends JPanel {
 		double[] output = controller.nextMove(d);
 
 		player.act(output);
-
-		System.out.println("Retorno do act output " + Arrays.toString(output));
-
-
 		if (output[3] > 0.5) {
 			if (inGame) {
 				if (!shot.isVisible()) {
@@ -269,7 +276,7 @@ public class Board extends JPanel {
 					if (shotX >= (alienX) && shotX <= (alienX + Commons.ALIEN_WIDTH) && shotY >= (alienY)
 							&& shotY <= (alienY + Commons.ALIEN_HEIGHT)) {
 
-						ImageIcon ii = new ImageIcon(explImg);
+						var ii = new ImageIcon(explImg);
 						alien.setImage(ii.getImage());
 						alien.setDying(true);
 						deaths++;
@@ -291,37 +298,39 @@ public class Board extends JPanel {
 		// aliens
 
 		for (Alien alien : aliens) {
+			if (alien.isVisible()) {
 
-			int x = alien.getX();
+				int x = alien.getX();
 
-			if (x >= Commons.BOARD_WIDTH - Commons.BORDER_RIGHT && direction != -1) {
+				if (x >= Commons.BOARD_WIDTH - Commons.BORDER_RIGHT && direction != -1) {
 
-				direction = -1;
+					direction = -1;
 
-				Iterator<Alien> i1 = aliens.iterator();
+					Iterator<Alien> i1 = aliens.iterator();
 
-				while (i1.hasNext()) {
+					while (i1.hasNext()) {
 
-					Alien a2 = i1.next();
-					a2.setY(a2.getY() + Commons.GO_DOWN);
+						Alien a2 = i1.next();
+						a2.setY(a2.getY() + Commons.GO_DOWN);
+					}
 				}
-			}
 
-			if (x <= Commons.BORDER_LEFT && direction != 1) {
+				if (x <= Commons.BORDER_LEFT && direction != 1) {
 
-				direction = 1;
+					direction = 1;
 
-				Iterator<Alien> i2 = aliens.iterator();
+					Iterator<Alien> i2 = aliens.iterator();
 
-				while (i2.hasNext()) {
+					while (i2.hasNext()) {
 
-					Alien a = i2.next();
-					a.setY(a.getY() + Commons.GO_DOWN);
+						Alien a = i2.next();
+						a.setY(a.getY() + Commons.GO_DOWN);
+					}
 				}
-			}
-			if (alien.isDying()) {
+				if (alien.isDying()) {
 
-				alien.die();
+					alien.die();
+				}
 			}
 
 		}
@@ -394,6 +403,7 @@ public class Board extends JPanel {
 
 	}
 
+
 	public int getDeaths() {
 		return deaths;
 	}
@@ -425,12 +435,11 @@ public class Board extends JPanel {
 
 	public Double getFitness() {
 		double fitness = (double) (getDeaths() * 10000 + getTime());
+		// System.out.println(fitness);
 		return fitness;
 	}
 
 	public void setController(GameController controller) {
 		this.controller = controller;
 	}
-
 }
-
