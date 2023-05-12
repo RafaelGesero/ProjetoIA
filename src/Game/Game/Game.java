@@ -5,6 +5,9 @@ import Game.controllers.NnController;
 import Game.nn.FeedForwardNN;
 import Game.space.Board;
 import Game.space.Commons;
+import Game.space.SpaceInvaders;
+
+import java.util.Random;
 
 public class Game{
     private FeedForwardNN nn;
@@ -42,6 +45,10 @@ public FeedForwardNN getNn(){
 
 public Double getFitness(){
         return board.getFitness();
+    }
+
+    public GameController getController(){
+        return g;
     }
 
 

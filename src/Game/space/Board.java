@@ -237,7 +237,6 @@ public class Board extends JPanel {
 	}
 
 	private void update() {
-
 		time++;
 		if (deaths == Commons.NUMBER_OF_ALIENS_TO_DESTROY) {
 
