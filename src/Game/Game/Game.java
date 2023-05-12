@@ -20,7 +20,7 @@ public class Game{
         nn = new FeedForwardNN(Commons.STATE_SIZE, (Commons.STATE_SIZE + Commons.NUM_ACTIONS)/2, Commons.NUM_ACTIONS);
         g = new NnController(nn);
         board= new Board(g);
-        board.setSeed(5);
+        board.setSeed(new Random().nextInt(1000));
         board.run();
     }
 
@@ -28,7 +28,7 @@ public class Game{
         nn = new FeedForwardNN(Commons.STATE_SIZE, (Commons.STATE_SIZE + Commons.NUM_ACTIONS)/2, Commons.NUM_ACTIONS,values);
         g = new NnController(nn);
         board = new Board(g);
-        board.setSeed(5);
+        board.setSeed(new Random().nextInt(1000));
         board.run();
 
     }

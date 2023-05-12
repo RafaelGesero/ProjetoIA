@@ -38,11 +38,11 @@ public class PlayRandomController {
 			nextGen = selectFitestIndividuals(currGen);
 			currGen.clear();
 
-
+			Random r = new Random();
 			//Crossover entre os melhores individuos para gerar o resto da população e possivel mutação
 			for(int i =(int) (NUMBER_GAMES * PROB_BEST_GAMES); i < NUMBER_GAMES; i ++){
-				int randNumber1 = (int)(Math.random() * (NUMBER_GAMES * PROB_BEST_GAMES + 1));
-				int randNumber2 = (int)(Math.random() * (NUMBER_GAMES * PROB_BEST_GAMES + 1));
+				int randNumber1 = r.nextInt((20));
+				int randNumber2 = r.nextInt(20);
 				Game g = crossoverTwoIndividuals(nextGen.get(randNumber1), nextGen.get(randNumber2));
 				mutation(g);
 				nextGen.add(g);
@@ -50,9 +50,11 @@ public class PlayRandomController {
 
 			System.out.println("Geração: " + gen);
 			bestGame = getBestGame(nextGen, bestGame, bestFitness);
+			if(gen % 25 == 0)
+				SpaceInvaders.showControllerPlaying(bestGame.getController(), new Random().nextInt(1000));
+
 			bestFitness = bestGame.getFitness();
 			currGen = nextGen;
-			System.out.println(currGen);
 			gen++;
 		}
 	}
@@ -61,8 +63,8 @@ public class PlayRandomController {
 		List<Game> aux = new ArrayList<>();
 
 		for(int i = 0; i < NUMBER_GAMES * PROB_BEST_GAMES; i++){
-			int individual1 = (int) (Math.random() * list.size());
-			int individual2 = (int) (Math.random() * list.size());
+			int individual1 = new Random().nextInt(NUMBER_GAMES);
+			int individual2 = new Random().nextInt(NUMBER_GAMES);
 			if(list.get(individual1).getFitness() > list.get(individual2).getFitness())
 				aux.add(list.get(individual1));
 			else
@@ -87,7 +89,7 @@ public class PlayRandomController {
 	private static void mutation(Game g){
 		double prob = Math.random();
 		if(prob <= PROB_MUTATION){
-			int pos = (int)(Math.random() * (6790 +1 ) + 0);
+			int pos = new Random().nextInt(NUMBER_GAMES);
 			double rand = Math.random();
 			g.getNn().getChromossome()[pos] = rand;
 		}
