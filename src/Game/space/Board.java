@@ -442,4 +442,12 @@ public class Board extends JPanel {
 	public void setController(GameController controller) {
 		this.controller = controller;
 	}
+
+
+
+
+	public String getMessage(){
+		return message;
+	}
+
 }

@@ -39,20 +39,19 @@ public class Player extends Sprite {
 				max = output[i];
 			}
 		}
-		System.out.println("Valor mais alto do array: " + maxI);
 		return maxI;
 	}
 
 	private void applyOrder(double[] output) {
 		int key = maxIndex(output);
 		if (key == 1) {
-			dx = -2;
-		}
-		if (key == 2) {
 			dx = 2;
 		}
-		if (key == 0) {
+		if (key == 2) {
 			dx = 0;
+		}
+		if (key == 0) {
+			dx = -2;
 		}
 	}
 
@@ -62,8 +61,6 @@ public class Player extends Sprite {
 
 		x += dx;
 
-		System.out.println("Valor de x: " + x);
-		System.out.println("Commons.BOARD_WIDTH - 2 * width " + (Commons.BOARD_WIDTH - 2 * width));
 
 		if (x <= 2) {
 
