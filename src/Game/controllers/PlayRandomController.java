@@ -1,117 +1,237 @@
 package Game.controllers;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
-import java.util.stream.StreamSupport;
 
 import Game.Game.Game;
-import Game.nn.FeedForwardNN;
-import Game.space.Commons;
 import Game.space.SpaceInvaders;
 
-import javax.swing.plaf.synth.SynthLookAndFeel;
-import javax.swing.text.html.StyleSheet;
-
 import static java.lang.System.exit;
-import static java.lang.System.in;
-
 
 public class PlayRandomController {
-	private static final int NUMBER_GAMES = 100;
+
+	private static final int BESTS = 10;
 	private static final double PROB_BEST_GAMES = 0.2;
-	private static final double PROB_MUTATION = 0.1;
+	private static final double PROB_MUTATION = 10;
+	private static final int POPULATION = 1000;
+
+	private static final int MAX_MUTATION = 10;
+
+	private static final int CROMOSSOME_SIZE =2110;
 
 	public static void main(String[] args) {
 
-		Game bestGame = null;
-		double bestFitness = 0;
+		List<Game> list = new ArrayList<>();
 
-		//criação da primeira geração
-		int gen  = 1;
-		List<Game> currGen = new ArrayList<>();
-		for(int i = 0; i < NUMBER_GAMES; i++){
-			currGen.add(new Game());
+		for(int i = 0; i< POPULATION; i++){
+			list.add(new Game());
 		}
 
-		while(true){
-			List<Game> nextGen = new ArrayList<>();
-			//Selecionar os melhores individuos
-			nextGen = selectFitestIndividuals(currGen);
-			currGen.clear();
+		int count =0;
+		while (true) {
+			count++;
+			System.out.println("Geração " + count + " ->Melhor Fitness: " + bestFitness(list));
 
-			Random r = new Random();
-			//Crossover entre os melhores individuos para gerar o resto da população e possivel mutação
-			for(int i =(int) (NUMBER_GAMES * PROB_BEST_GAMES); i < NUMBER_GAMES; i ++){
-				int randNumber1 = r.nextInt((20));
-				int randNumber2 = r.nextInt(20);
-				Game g = crossoverTwoIndividuals(nextGen.get(randNumber1), nextGen.get(randNumber2));
-				mutation(g);
-				nextGen.add(g);
-			}
+			System.out.println(list.get(0).getNn().getChromossomeSize());
 
-			System.out.println("Geração: " + gen);
-			bestGame = getBestGame(nextGen, bestGame, bestFitness);
-			if(gen % 25 == 0)
-				SpaceInvaders.showControllerPlaying(bestGame.getController(), new Random().nextInt(1000));
 
-			bestFitness = bestGame.getFitness();
-			currGen = nextGen;
-			gen++;
+
+
+
+
+			List<Game> best = tournament(list);
+			//List<Game> best = confront(list);
+			//List<Game> best = rankSelection(list);
+
+			list.clear();
+
+
+			list = crossover(best);
 		}
+
+
+
+
+
+
+
 	}
 
-	private static List<Game> selectFitestIndividuals(List<Game> list) {
+	private static double bestFitness(List<Game> game){
+		double a =0;
+		for(Game g: game){
+			if(g.getFitness() > a ){
+				a = g.getFitness();
+			}
+		}
+		return a;
+	}
+
+	private static List<Game> tournament(List<Game> game){
+		List<Game> selected = new ArrayList<>();
+
+		while (selected.size() < BESTS) {
+			List<Game> candidates = new ArrayList<>();
+
+			// Seleciona aleatoriamente TOURNAMENT_SIZE indivíduos da população
+			for (int i = 0; i < 200; i++) {
+				int index = (int) (Math.random() * game.size());
+				candidates.add(game.get(index));
+			}
+
+			// Ordena os indivíduos pelo fitness
+			candidates.sort(Comparator.comparing(Game::getFitness).reversed());
+
+			// Seleciona o indivíduo mais apto dos candidatos e o adiciona à lista de selecionados
+			selected.add(candidates.get(0));
+		}
+
+		return selected;
+	}
+
+
+	private static List<Game> rankSelection(List<Game> game) {
+		game.sort(Comparator.comparing(Game::getFitness).reversed());
+
+		double totalRank = (game.size() * (game.size() + 1)) / 2.0; // soma dos ranks de 1 a N
+
+		List<Game> selected = new ArrayList<>();
+
+		for (int i = 0; i < BESTS; i++) {
+			double rand = Math.random();
+			double sum = 0;
+			for (int j = 0; j < game.size(); j++) {
+				double prob = (game.size() - j) / totalRank;
+				sum += prob;
+				if (sum > rand) {
+					selected.add(game.get(j));
+					break;
+				}
+			}
+		}
+
+		return selected;
+	}
+
+	private static List<Game> confront(List<Game> game) {
+		List<Game> bestGames = new ArrayList<>();
+		int numBestGames = (int) (POPULATION * PROB_BEST_GAMES);
+
+		while (bestGames.size() < numBestGames) {
+			ListIterator<Game> it = game.listIterator();
+			Game bestGame = it.next();
+
+			while (it.hasNext()) {
+				Game currentGame = it.next();
+				if (currentGame.getFitness() > bestGame.getFitness()) {
+					bestGame = currentGame;
+				}
+			}
+
+			bestGames.add(bestGame);
+			game.remove(bestGame);
+		}
+
+		return bestGames;
+	}
+
+
+
+	private static void printList(List<Game> game){
+		System.out.println("___________________________________________________________");
+		int count =0;
+		for(Game g: game){
+			System.out.println("O fitness deste elemento é : " + g.getFitness() );
+			count++;
+		}
+		System.out.println("O size é de " + count);
+
+	}
+
+
+	private static List<Game> crossover(List<Game> game){
+
 		List<Game> aux = new ArrayList<>();
 
-		for(int i = 0; i < NUMBER_GAMES * PROB_BEST_GAMES; i++){
-			int individual1 = new Random().nextInt(NUMBER_GAMES);
-			int individual2 = new Random().nextInt(NUMBER_GAMES);
-			if(list.get(individual1).getFitness() > list.get(individual2).getFitness())
-				aux.add(list.get(individual1));
-			else
-				aux.add(list.get(individual2));
+		while(aux.size()<POPULATION){
+			Random r = new Random();
+			Game parent1 = game.get(r.nextInt(game.size()));
+			Game parent2 = game.get(r.nextInt(game.size()));
+			double[] childChromossome = new double[CROMOSSOME_SIZE];
+
+			// Define um ponto de corte aleatório
+			int cutoff = r.nextInt(CROMOSSOME_SIZE);
+
+			// Realiza o crossover uniforme
+			for (int i = 0; i < CROMOSSOME_SIZE; i++) {
+				if (i < cutoff) {
+					childChromossome[i] = parent1.getNn().getChromossome()[i];
+				} else {
+					childChromossome[i] = parent2.getNn().getChromossome()[i];
+				}
+			}
+
+			// Realiza a mutação
+			double[] mutatedChildChromossome = mutation(childChromossome);
+
+			// Cria o filho e adiciona na nova população
+			Game child = new Game(mutatedChildChromossome);
+			getWinner(child);
+			aux.add(child);
 		}
 
 		return aux;
 	}
 
-	private static Game getBestGame(List<Game> list, Game currentBest, double currentBestFitness) {
-		for (Game game : list) {
-			double fitness = game.getFitness();
-			if (fitness > currentBestFitness) {
-				currentBest = game;
-				currentBestFitness = fitness;
+
+
+	private static double[] mutation(double[] values) {
+		Random r = new Random();
+		if (r.nextInt(100) <= PROB_MUTATION) {
+			int numMutations = r.nextInt(MAX_MUTATION) + 1;
+			for (int i = 0; i < numMutations; i++) {
+				int index = r.nextInt(CROMOSSOME_SIZE);
+				double newCromossome = r.nextDouble();
+				if (r.nextBoolean()) {
+					newCromossome = -newCromossome;
+				}
+				values[index] = newCromossome;
 			}
 		}
-		System.out.println("Melhor fitness: " + currentBestFitness);
-		return currentBest;
+		return values;
 	}
 
-	private static void mutation(Game g){
-		double prob = Math.random();
-		if(prob <= PROB_MUTATION){
-			int pos = new Random().nextInt(NUMBER_GAMES);
-			double rand = Math.random();
-			g.getNn().getChromossome()[pos] = rand;
+
+
+	private static void getWinner(Game g){
+			if(g.getBoard().getMessage().equals("Game won!")){
+				System.out.println("VENCEDOR!!!!!!!!");
+				System.out.println("O Fitness do vencedor foi de " + g.getFitness());
+			}
+
+			}
+
+
+
+	private static int getBest(List<Game> game){
+		int a = 0;
+		double b =0;
+
+		for(Game g: game){
+			if(g.getFitness() > b){
+				a = game.indexOf(g);
+				b = g.getFitness();
+			}
 		}
+		return a;
 	}
 
-	private static Game crossoverTwoIndividuals(Game p1, Game p2){
-		double[] child = new double[6790];
-		int min = 1;
-		int max = 6790;
-		int rand = (int)(Math.random() * (max - min +1 ) + min);
-		for(int i = 0; i < rand ; i++){
-			child[i] = p1.getNn().getChromossome()[i];
-		}
-		for(int i = rand; i < 6790; i++){
-			child[i] = p2.getNn().getChromossome()[i];
-		}
-		Game c1 = new Game(child);
-		return c1;
 
-	}
+
+
+
 
 
 }
-
-

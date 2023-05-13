@@ -244,7 +244,6 @@ public class Board extends JPanel {
 			if (!headLess)
 				timer.stop();
 			message = "Game won!";
-			System.out.println("test");
 		}
 
 		// player
@@ -449,5 +448,7 @@ public class Board extends JPanel {
 	public String getMessage(){
 		return message;
 	}
+
+
 
 }

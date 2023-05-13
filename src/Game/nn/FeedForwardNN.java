@@ -33,6 +33,7 @@ public class FeedForwardNN {
         this.hiddenBiases = new double[hiddenDim];
         this.outputWeights = new double[hiddenDim][outputDim];
         this.outputBiases = new double[outputDim];
+        initializeWeights();
     }
 
     public FeedForwardNN(int inputDim, int hiddenDim, int outputDim, double[] values) {
