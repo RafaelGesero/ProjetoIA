@@ -244,6 +244,9 @@ public class Board extends JPanel {
 			if (!headLess)
 				timer.stop();
 			message = "Game won!";
+			System.out.println("-------------------");
+			System.out.println("GANHEI!!!!!!");
+			System.out.println("-------------------");
 		}
 
 		// player
@@ -433,7 +436,7 @@ public class Board extends JPanel {
 	}
 
 	public Double getFitness() {
-		double fitness = (double) (getDeaths() * 10000 + getTime());
+		double fitness = (double) (getDeaths() * 10000 - getTime());
 		// System.out.println(fitness);
 		return fitness;
 	}

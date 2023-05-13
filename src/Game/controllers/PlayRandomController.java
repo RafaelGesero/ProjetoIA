@@ -36,27 +36,12 @@ public class PlayRandomController {
 
 			System.out.println(list.get(0).getNn().getChromossomeSize());
 
-
-
-
-
-
 			List<Game> best = tournament(list);
 			//List<Game> best = confront(list);
 			//List<Game> best = rankSelection(list);
-
 			list.clear();
-
-
 			list = crossover(best);
 		}
-
-
-
-
-
-
-
 	}
 
 	private static double bestFitness(List<Game> game){

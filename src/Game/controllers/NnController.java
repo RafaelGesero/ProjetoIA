@@ -16,6 +16,7 @@ public class NnController implements GameController {
     public double[] nextMove(double[] currentState) {
         double[] forward = nn.forward(currentState);
         return forward;
+
     }
 
 
