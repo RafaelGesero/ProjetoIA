@@ -60,8 +60,6 @@ public class Player extends Sprite {
 		applyOrder(output);
 
 		x += dx;
-
-
 		if (x <= 2) {
 
 			x = 2;

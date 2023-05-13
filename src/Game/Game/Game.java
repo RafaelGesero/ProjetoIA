@@ -15,20 +15,25 @@ public class Game{
 
     private Board board;
 
+    private long seed;
+
+
 
     public Game(){
-        nn = new FeedForwardNN(Commons.STATE_SIZE, (Commons.STATE_SIZE + Commons.NUM_ACTIONS)/2, Commons.NUM_ACTIONS);
+        nn = new FeedForwardNN(Commons.STATE_SIZE, Commons.NUMBER_OF_ALIENS_TO_DESTROY, Commons.NUM_ACTIONS);
         g = new NnController(nn);
         board= new Board(g);
-        board.setSeed(new Random().nextInt(1000));
+        seed = new Random().nextInt(1000);
+        board.setSeed(seed);
         board.run();
     }
 
     public Game(double[] values){
-        nn = new FeedForwardNN(Commons.STATE_SIZE, (Commons.STATE_SIZE + Commons.NUM_ACTIONS)/2, Commons.NUM_ACTIONS,values);
+        nn = new FeedForwardNN(Commons.STATE_SIZE, Commons.NUMBER_OF_ALIENS_TO_DESTROY, Commons.NUM_ACTIONS,values);
         g = new NnController(nn);
         board = new Board(g);
-        board.setSeed(new Random().nextInt(1000));
+        seed = new Random().nextInt(1000);
+        board.setSeed(seed);
         board.run();
 
     }
@@ -51,6 +56,6 @@ public Double getFitness(){
         return g;
     }
 
-
+public long getSeed(){return seed;}
 
 }
