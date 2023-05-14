@@ -43,23 +43,33 @@ private static int vencedores =0;
 	}
 
 	private static void showPlayer(){
-		String fileName = "values.txt";
-		double[] values = new double[CROMOSSOME_SIZE];
+		String nomeArquivo = "VencedorSeed.txt";
+		List<Double> listaDoubles = new ArrayList<>();
 
-		try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
-			String linha = br.readLine();
-			String[] tokens = linha.substring(1, linha.length() - 1).split(",");
-			for(int i = 0; i < CROMOSSOME_SIZE; i++){
-				values[i] = Double.parseDouble(tokens[i].trim());
+		try {
+			BufferedReader bufferedReader = new BufferedReader(new FileReader(nomeArquivo));
+			String linha;
+			while ((linha = bufferedReader.readLine()) != null) {
+				Double valorDouble = Double.parseDouble(linha);
+				listaDoubles.add(valorDouble);
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
+			bufferedReader.close();
+		} catch (Exception e) {
+			System.out.println("Erro ao ler arquivo: " + e.getMessage());
 		}
+
+		double[] values = new double[listaDoubles.size()];
+		for (int i = 0; i < listaDoubles.size(); i++) {
+			values[i] = listaDoubles.get(i);
+		}
+
+		// Agora o vetorDoubles contém todos os valores do arquivo
 
 		Game g = new Game(values);
 		int seed = new Random().nextInt(100);
 		SpaceInvaders.showControllerPlaying(g.getController(), seed);
 	}
+
 
 	private static double bestFitness(List<Game> game){
 		double a =0;
