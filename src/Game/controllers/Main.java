@@ -11,19 +11,19 @@ import Game.space.SpaceInvaders;
 import static java.lang.System.exit;
 
 public class Main {
-
+private static int vencedores =0;
 	private static final int BESTS = 50;
 	private static final double PROB_BEST_GAMES = 0.2;
-	private static final double PROB_MUTATION = 10;
-	private static final int POPULATION = 10000;
+	private static final double PROB_MUTATION = 0.3;
+	private static final int POPULATION = 1000;
 
-	private static final int MAX_MUTATION = 10;
+	private static final int MAX_MUTATION = 20;
 
 	private static final int CROMOSSOME_SIZE =2110;
 
 	public static void main(String[] args) {
-		showPlayer();
-		/*List<Game> list = new ArrayList<>();
+		//showPlayer();
+		List<Game> list = new ArrayList<>();
 
 		for(int i = 0; i< POPULATION; i++){
 			list.add(new Game());
@@ -39,7 +39,7 @@ public class Main {
 			//List<Game> best = rankSelection(list);
 			list.clear();
 			list = crossover(best);
-		}*/
+		}
 	}
 
 	private static void showPlayer(){
@@ -179,30 +179,29 @@ public class Main {
 
 
 	private static double[] mutation(double[] values) {
-		Random r = new Random();
-		if (r.nextInt(100) <= PROB_MUTATION) {
-			int numMutations = r.nextInt(MAX_MUTATION) + 1;
-			for (int i = 0; i < numMutations; i++) {
-				int index = r.nextInt(CROMOSSOME_SIZE);
-				double newCromossome = r.nextDouble();
-				if (r.nextBoolean()) {
-					newCromossome = -newCromossome;
-				}
-				System.out.println(newCromossome);
-				values[index] = newCromossome;
+		double [] valores = values;
+
+		double r = new Random().nextDouble();
+		int mutations = new Random().nextInt(20) +1;
+		if(r <= PROB_MUTATION){
+			for(int i =0; i<mutations; i++){
+				valores[new Random().nextInt(values.length)] = new Random().nextDouble() * 2 - 1;
 			}
 		}
-		return values;
+		return valores;
 	}
 
 	private static void getWinner(Game g){
-			if(g.getBoard().getMessage().equals("Game won!")){
-				System.out.println("VENCEDOR!!!!!!!!");
-				System.out.println("O Fitness do vencedor foi de " + g.getFitness());
-				System.out.println(Arrays.toString(g.getNn().getChromossome()));
-			}
+		if(g.getBoard().getMessage().equals("Game won!")){
+			System.out.println("VENCEDOR!!!!!!!!");
+			System.out.println("O Fitness do vencedor foi de " + g.getFitness());
+			//System.out.println(Arrays.toString(g.getNn().getChromossome()));
+			vencedores++;
+			writeFile(g);
+			exit(0);
+		}
 
-			}
+	}
 
 
 
@@ -219,7 +218,20 @@ public class Main {
 		return a;
 	}
 
+	private static void writeFile(Game g){
+		FileWriter fw = null;
+		try {
+			fw = new FileWriter("Vencedor22"+vencedores+".txt" );
+			double[] aux = g.getNn().getChromossome();
 
+			for(int i = 0; i < aux.length; i++) {
+				fw.write(aux[i] + "\n");
+			}
+			fw.close();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
 
 
