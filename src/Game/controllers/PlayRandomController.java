@@ -1,29 +1,29 @@
 package Game.controllers;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 import Game.Game.Game;
+import Game.nn.FeedForwardNN;
+import Game.space.Commons;
 import Game.space.SpaceInvaders;
 
 import static java.lang.System.exit;
 
 public class PlayRandomController {
 
-	private static final int BESTS = 10;
+	private static final int BESTS = 50;
 	private static final double PROB_BEST_GAMES = 0.2;
 	private static final double PROB_MUTATION = 10;
-	private static final int POPULATION = 1000;
+	private static final int POPULATION = 10000;
 
 	private static final int MAX_MUTATION = 10;
 
 	private static final int CROMOSSOME_SIZE =2110;
 
 	public static void main(String[] args) {
-
-		List<Game> list = new ArrayList<>();
+		showPlayer();
+		/*List<Game> list = new ArrayList<>();
 
 		for(int i = 0; i< POPULATION; i++){
 			list.add(new Game());
@@ -34,14 +34,31 @@ public class PlayRandomController {
 			count++;
 			System.out.println("Geração " + count + " ->Melhor Fitness: " + bestFitness(list));
 
-			System.out.println(list.get(0).getNn().getChromossomeSize());
-
-			List<Game> best = tournament(list);
-			//List<Game> best = confront(list);
+			//List<Game> best = tournament(list);
+			List<Game> best = confront(list);
 			//List<Game> best = rankSelection(list);
 			list.clear();
 			list = crossover(best);
+		}*/
+	}
+
+	private static void showPlayer(){
+		String fileName = "values.txt";
+		double[] values = new double[CROMOSSOME_SIZE];
+
+		try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+			String linha = br.readLine();
+			String[] tokens = linha.substring(1, linha.length() - 1).split(",");
+			for(int i = 0; i < CROMOSSOME_SIZE; i++){
+				values[i] = Double.parseDouble(tokens[i].trim());
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
+
+		Game g = new Game(values);
+		int seed = new Random().nextInt(100);
+		SpaceInvaders.showControllerPlaying(g.getController(), seed);
 	}
 
 	private static double bestFitness(List<Game> game){
@@ -144,7 +161,8 @@ public class PlayRandomController {
 			Random r = new Random();
 			Game parent1 = game.get(r.nextInt(game.size()));
 			Game parent2 = game.get(r.nextInt(game.size()));
-			double[] childChromossome = new double[CROMOSSOME_SIZE];
+			double[] childChromossome1 = new double[CROMOSSOME_SIZE];
+			double[] childChromossome2 = new double[CROMOSSOME_SIZE];
 
 			// Define um ponto de corte aleatório
 			int cutoff = r.nextInt(CROMOSSOME_SIZE);
@@ -152,19 +170,28 @@ public class PlayRandomController {
 			// Realiza o crossover uniforme
 			for (int i = 0; i < CROMOSSOME_SIZE; i++) {
 				if (i < cutoff) {
-					childChromossome[i] = parent1.getNn().getChromossome()[i];
+					childChromossome1[i] = parent1.getNn().getChromossome()[i];
+					childChromossome2[i] = parent2.getNn().getChromossome()[i];
+
+
 				} else {
-					childChromossome[i] = parent2.getNn().getChromossome()[i];
+					childChromossome1[i] = parent2.getNn().getChromossome()[i];
+					childChromossome2[i] = parent1.getNn().getChromossome()[i];
 				}
 			}
 
 			// Realiza a mutação
-			double[] mutatedChildChromossome = mutation(childChromossome);
+			double[] mutatedChildChromossome1 = mutation(childChromossome1);
+			double[] mutatedChildChromossome2 = mutation(childChromossome2);
 
 			// Cria o filho e adiciona na nova população
-			Game child = new Game(mutatedChildChromossome);
-			getWinner(child);
-			aux.add(child);
+			Game child1 = new Game(mutatedChildChromossome1);
+			getWinner(child1);
+			aux.add(child1);
+
+			Game child2 = new Game(mutatedChildChromossome2);
+			getWinner(child2);
+			aux.add(child2);
 		}
 
 		return aux;
@@ -188,12 +215,11 @@ public class PlayRandomController {
 		return values;
 	}
 
-
-
 	private static void getWinner(Game g){
 			if(g.getBoard().getMessage().equals("Game won!")){
 				System.out.println("VENCEDOR!!!!!!!!");
 				System.out.println("O Fitness do vencedor foi de " + g.getFitness());
+				System.out.println(Arrays.toString(g.getNn().getChromossome()));
 			}
 
 			}
