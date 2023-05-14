@@ -10,7 +10,7 @@ import Game.space.SpaceInvaders;
 
 import static java.lang.System.exit;
 
-public class PlayRandomController {
+public class Main {
 
 	private static final int BESTS = 50;
 	private static final double PROB_BEST_GAMES = 0.2;
@@ -94,28 +94,7 @@ public class PlayRandomController {
 	}
 
 
-	private static List<Game> rankSelection(List<Game> game) {
-		game.sort(Comparator.comparing(Game::getFitness).reversed());
-
-		double totalRank = (game.size() * (game.size() + 1)) / 2.0; // soma dos ranks de 1 a N
-
-		List<Game> selected = new ArrayList<>();
-
-		for (int i = 0; i < BESTS; i++) {
-			double rand = Math.random();
-			double sum = 0;
-			for (int j = 0; j < game.size(); j++) {
-				double prob = (game.size() - j) / totalRank;
-				sum += prob;
-				if (sum > rand) {
-					selected.add(game.get(j));
-					break;
-				}
-			}
-		}
-
-		return selected;
-	}
+	
 
 	private static List<Game> confront(List<Game> game) {
 		List<Game> bestGames = new ArrayList<>();
@@ -209,6 +188,7 @@ public class PlayRandomController {
 				if (r.nextBoolean()) {
 					newCromossome = -newCromossome;
 				}
+				System.out.println(newCromossome);
 				values[index] = newCromossome;
 			}
 		}
