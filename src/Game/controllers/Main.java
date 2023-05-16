@@ -77,16 +77,13 @@ private static int vencedores =0;
 		while (selected.size() < BESTS) {
 			List<Game> candidates = new ArrayList<>();
 
-			// Seleciona aleatoriamente TOURNAMENT_SIZE indivíduos da população
 			for (int i = 0; i < 200; i++) {
 				int index = (int) (Math.random() * game.size());
 				candidates.add(game.get(index));
 			}
 
-			// Ordena os indivíduos pelo fitness
 			candidates.sort(Comparator.comparing(Game::getFitness).reversed());
 
-			// Seleciona o indivíduo mais apto dos candidatos e o adiciona à lista de selecionados
 			selected.add(candidates.get(0));
 		}
 
@@ -143,10 +140,8 @@ private static int vencedores =0;
 			double[] childChromossome1 = new double[CROMOSSOME_SIZE];
 			double[] childChromossome2 = new double[CROMOSSOME_SIZE];
 
-			// Define um ponto de corte aleatório
 			int cutoff = r.nextInt(CROMOSSOME_SIZE);
 
-			// Realiza o crossover uniforme
 			for (int i = 0; i < CROMOSSOME_SIZE; i++) {
 				if (i < cutoff) {
 					childChromossome1[i] = parent1.getNn().getChromossome()[i];
@@ -163,7 +158,6 @@ private static int vencedores =0;
 			double[] mutatedChildChromossome1 = mutation(childChromossome1);
 			double[] mutatedChildChromossome2 = mutation(childChromossome2);
 
-			// Cria o filho e adiciona na nova população
 			Game child1 = new Game(mutatedChildChromossome1);
 			getWinner(child1);
 			aux.add(child1);

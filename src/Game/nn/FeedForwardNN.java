@@ -10,13 +10,10 @@ import java.util.Random;
 
 public class FeedForwardNN {
 
-    //camada e entrada
     private int inputDim;
 
-    //camada oculta
     private int hiddenDim;
 
-    //camada de saída
     private int outputDim;
 
     private double[][] inputWeights;
@@ -94,7 +91,6 @@ public class FeedForwardNN {
     }
 
     public void initializeWeights() {
-        // Randomly initialize weights and biases
         Random random = new Random();
         for (int i = 0; i < inputDim; i++) {
             for (int j = 0; j < hiddenDim; j++) {
@@ -114,7 +110,6 @@ public class FeedForwardNN {
 
 
     public double[] forward(double[] d2) {
-        // Compute output given input
         double[] hidden = new double[hiddenDim];
         for (int i = 0; i < hiddenDim; i++) {
             double sum = 0.0;
